@@ -40,7 +40,10 @@ __- Range vector:__ A set of time series containing a range of data points over 
 -----------------------------------------
 ## 5- How To calculate the average request duration over the last 5 minutes from a histogram?
 
-``` rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m]) ```        
+- Calculate the quantile value for the histogram using the histogram_quantile function.
+```  histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le)) ```
+- Calculate the average over the range vector.
+``` avg_over_time(histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le)))  ```
 
 -----------------------------------------
 ## 6- What is Thanos Prometheus?
